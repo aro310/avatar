@@ -3,8 +3,8 @@ import os
 
 working_directory = r"E:\reactav\aro\rhub"
 
-mp3_file = os.path.abspath("../public/audios/output.mp3")
-ogg_file = os.path.abspath("../public/audios/output.ogg")
+mp3_file = os.path.abspath("../public/audios/aro.mp3")
+ogg_file = os.path.abspath("../public/audios/aro.ogg")
 json_file = os.path.abspath("../public/audios/aro.json")
 
 # Conversion MP3 -> OGG Vorbis

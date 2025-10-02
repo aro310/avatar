@@ -142,7 +142,7 @@ export function Avatar(props) {
     ] = 1;
     if (playAudio) {
       audio.play();
-      if (script === "welcome") {
+      if (script === "aro") {
         setAnimation("Greeting");
       } else {
         setAnimation("Angry");
