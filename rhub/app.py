@@ -1,38 +1,77 @@
-from flask import Flask, request
+from flask import Flask, request, jsonify
+from flask_cors import CORS
 import subprocess
 import os
+from flasgger import Swagger # 1. Importer Swagger
 
 app = Flask(__name__)
+CORS(app)
+swagger = Swagger(app) # 2. Initialiser Swagger avec votre app
 
-@app.route("/")
-def home():
-    return """
-    <html>
-      <head><title>Lanceur</title></head>
-      <body>
-        <h1>Texte → Audio → JSON</h1>
-        <form action="/run-script" method="post">
-          <input type="text" name="texte" placeholder="Écris ton texte ici" size="50"/>
-          <button type="submit">Générer</button>
-        </form>
-      </body>
-    </html>
-    """
-
-@app.route("/run-script", methods=["POST"])
+@app.route("/api/run-script", methods=["POST"])
 def run_script():
-    # Récupérer le texte saisi
-    texte = request.form.get("texte", "Texte par défaut")
+    """
+    Exécute les scripts de traitement de texte vers audio et JSON.
+    ---
+    tags:
+      - Script Execution
+    parameters:
+      - in: body
+        name: body
+        required: true
+        schema:
+          id: ScriptInput
+          required:
+            - texte
+          properties:
+            texte:
+              type: string
+              description: Le texte à convertir.
+              example: "Bonjour, ceci est un test."
+    responses:
+      200:
+        description: Les scripts ont été exécutés avec succès.
+        schema:
+          properties:
+            status:
+              type: string
+              example: success
+            message:
+              type: string
+              example: "Audio et JSON générés avec succès pour le texte : '...'"
+      400:
+        description: Requête invalide, le champ 'texte' est manquant.
+      500:
+        description: Erreur interne lors de l'exécution d'un script.
+    """
+    try:
+        data = request.get_json()
+        texte = data.get("texte")
 
-    # 1. Lancer ele.py avec le texte
-    ele = os.path.abspath("ele.py")
-    subprocess.run(["python", ele, texte], check=True)
+        if not texte:
+            return jsonify({"status": "error", "message": "Le texte est manquant"}), 400
 
-    # 2. Lancer sub.py (convertir MP3->OGG->JSON)
-    sub = os.path.abspath("sub.py")
-    subprocess.run(["python", sub], check=True)
+        # ... (le reste de votre logique reste inchangé)
+        ele_script_path = os.path.abspath("ele.py")
+        subprocess.run(["python", ele_script_path, texte], check=True, capture_output=True, text=True)
 
-    return f"✅ Audio et JSON générés avec succès pour le texte : {texte}"
+        sub_script_path = os.path.abspath("sub.py")
+        subprocess.run(["python", sub_script_path], check=True, capture_output=True, text=True)
+        # ---
+
+        return jsonify({
+            "status": "success", 
+            "message": f"Audio et JSON générés avec succès pour le texte : '{texte}'"
+        })
+
+    except subprocess.CalledProcessError as e:
+        return jsonify({
+            "status": "error", 
+            "message": "Une erreur est survenue lors de l'exécution d'un script.",
+            "details": e.stderr
+        }), 500
+    except Exception as e:
+        return jsonify({"status": "error", "message": str(e)}), 500
 
 if __name__ == "__main__":
-    app.run(debug=True)
+    app.run(debug=True, port=5000)

@@ -21,4 +21,4 @@ audio = client.text_to_speech.convert(
 mp3_path = os.path.join(output_dir, "output.mp3")
 save(audio, mp3_path)
 
-print(f"✅ Audio généré depuis le texte : '{texte}' → {mp3_path}")
+print(f" Audio généré depuis le texte : '{texte}' -> {mp3_path}")
