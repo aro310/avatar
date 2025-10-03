@@ -159,6 +159,19 @@ export function Avatar(props) {
     [idleAnimation[0], angryAnimation[0], greetingAnimation[0]],
     group
   );
+
+  useEffect(() => {
+    const onAudioEnd = () => {
+      store.set({ playAudio: false });
+    };
+  
+    audio.addEventListener("ended", onAudioEnd);
+  
+    return () => {
+      audio.removeEventListener("ended", onAudioEnd);
+    };
+  }, [audio]);
+
   useEffect(() => {
     actions[animation].reset().fadeIn(0.5).play();
     return () => actions[animation].fadeOut(0.5);
