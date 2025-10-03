@@ -1,12 +1,9 @@
-// src/components/TextToAudioGenerator.jsx
 import React, { useState } from 'react';
 import { generateAudioFromText } from '../services/apiService';
-
 export const TextToAudioGenerator = () => {
   const [inputText, setInputText] = useState('');
   const [isLoading, setIsLoading] = useState(false);
   const [message, setMessage] = useState('');
-
   const handleSubmit = async (event) => {
     event.preventDefault();
     setIsLoading(true);
@@ -14,13 +11,13 @@ export const TextToAudioGenerator = () => {
     try {
       const result = await generateAudioFromText(inputText);
       setMessage(result.message);
+      window.dispatchEvent(new Event('audioGenerated'));
     } catch (error) {
       setMessage(`Erreur : ${error.message}`);
     } finally {
       setIsLoading(false);
     }
   };
-
   return (
     <div className="ui-container">
       <h2>Générer l'audio</h2>
