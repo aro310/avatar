@@ -171,16 +171,15 @@ export function Avatar(props) {
   });
   useEffect(() => {
     const handleAudioGenerated = () => {
-      if (script === "aro") {
-        setReloadKey((k) => k + 1);
-        store.set({ playAudio: true });
-      }
+      store.set({ script: "aro" });
+      setReloadKey((k) => k + 1);
+      store.set({ playAudio: true });
     };
     window.addEventListener("audioGenerated", handleAudioGenerated);
     return () => {
       window.removeEventListener("audioGenerated", handleAudioGenerated);
     };
-  }, [script]);
+  }, []);
   return (
     <group {...props} dispose={null} ref={group}>
       <primitive object={nodes.Hips} />
