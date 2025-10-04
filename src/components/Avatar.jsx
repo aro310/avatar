@@ -132,17 +132,17 @@ export function Avatar(props) {
     ] = 1;
     if (playAudio) {
       audio.play();
-      if (script === "welcome") {
-        setAnimation("Greeting");
+      if (script === "aro") {
+        setAnimation("Idle");
       } else {
         setAnimation("Angry");
       }
     } else {
-      setAnimation("Idle");
+      setAnimation("Greeting");
       audio.pause();
     }
   }, [playAudio, script]);
-  const { nodes, materials } = useGLTF("/models/646d9dcdc8a5f5bddbfac913.glb");
+  const { nodes, materials } = useGLTF("/models/aro.glb");
   const { animations: idleAnimation } = useFBX("/animations/Idle.fbx");
   const { animations: angryAnimation } = useFBX(
     "/animations/Angry Gesture.fbx"
@@ -256,4 +256,4 @@ export function Avatar(props) {
     </group>
   );
 }
-useGLTF.preload("/models/646d9dcdc8a5f5bddbfac913.glb");
+useGLTF.preload("/models/aro.glb");

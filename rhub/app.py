@@ -3,6 +3,7 @@ from flask_cors import CORS
 import subprocess
 import os
 from flasgger import Swagger # 1. Importer Swagger
+from gemini_api import chat_with_gemini
 
 app = Flask(__name__)
 CORS(app)
@@ -70,6 +71,60 @@ def run_script():
             "message": "Une erreur est survenue lors de l'exécution d'un script.",
             "details": e.stderr
         }), 500
+    except Exception as e:
+        return jsonify({"status": "error", "message": str(e)}), 500
+
+@app.route("/api/chat", methods=["POST"])
+def chat():
+    """
+    Interagit avec le modèle Gemini pour obtenir une réponse.
+    ---
+    tags:
+      - Gemini AI
+    parameters:
+      - in: body
+        name: body
+        required: true
+        schema:
+          id: ChatInput
+          required:
+            - prompt
+          properties:
+            prompt:
+              type: string
+              description: La question ou le texte à envoyer au modèle Gemini.
+              example: "Explique la a relativité en termes simples."
+    responses:
+      200:
+        description: Réponse obtenue avec succès depuis Gemini.
+        schema:
+          properties:
+            status:
+              type: string
+              example: success
+            response:
+              type: string
+              example: "La relativité, c'est l'idée que..."
+      400:
+        description: Requête invalide, le champ 'prompt' est manquant.
+      500:
+        description: Erreur interne lors de la communication avec l'API Gemini.
+    """
+    try:
+        data = request.get_json()
+        prompt = data.get("prompt")
+
+        if not prompt:
+            return jsonify({"status": "error", "message": "Le champ 'prompt' est manquant"}), 400
+
+        # Appel de la fonction importée
+        gemini_response = chat_with_gemini(prompt)
+
+        return jsonify({
+            "status": "success",
+            "response": gemini_response
+        })
+
     except Exception as e:
         return jsonify({"status": "error", "message": str(e)}), 500
 
