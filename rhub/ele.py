@@ -9,12 +9,12 @@ texte = sys.argv[1] if len(sys.argv) > 1 else "Texte par défaut"
 output_dir = os.path.abspath("../public/audios")
 os.makedirs(output_dir, exist_ok=True)
 
-client = ElevenLabs(api_key="sk_6ac41ace41d5569923b6cd1e2f48461cdc146299e585b922")
+client = ElevenLabs(api_key="sk_55524b9c3e4677f0e279ec7db556e1d9d9e3b90a5329e83e")
 
 # Génération audio
 audio = client.text_to_speech.convert(
     text=texte,
-    voice_id="pNInz6obpgDQGcFmaJgB",
+    voice_id="SOYHLrjzK2X1ezoPC6cr",
     model_id="eleven_multilingual_v2"
 )
 

@@ -133,9 +133,11 @@ export function Avatar(props) {
     if (playAudio) {
       audio.play();
       if (script === "aro") {
-        setAnimation("Idle");
+        const anims = ["Think", "Talk"];
+        const randomAnim = anims[Math.floor(Math.random() * anims.length)];
+        setAnimation(randomAnim);
       } else {
-        setAnimation("Angry");
+        setAnimation("Idle");
       }
     } else {
       setAnimation("Greeting");
@@ -150,13 +152,22 @@ export function Avatar(props) {
   const { animations: greetingAnimation } = useFBX(
     "/animations/Standing Greeting.fbx"
   );
+  const { animations: thinkingAnimation } = useFBX(
+    "/animations/Speak.fbx"
+  );
+  const { animations: talkingAnimation } = useFBX(
+    "/animations/Talking.fbx"
+  );
   idleAnimation[0].name = "Idle";
   angryAnimation[0].name = "Angry";
   greetingAnimation[0].name = "Greeting";
+  thinkingAnimation[0].name = "Think";
+  talkingAnimation[0].name = "Talk";
+
   const [animation, setAnimation] = useState("Idle");
   const group = useRef();
-  const { actions } = useAnimations(
-    [idleAnimation[0], angryAnimation[0], greetingAnimation[0]],
+  const { actions, mixer } = useAnimations(
+    [idleAnimation[0], angryAnimation[0], greetingAnimation[0], thinkingAnimation[0], talkingAnimation[0]],
     group
   );
 
@@ -173,9 +184,31 @@ export function Avatar(props) {
   }, [audio]);
 
   useEffect(() => {
-    actions[animation].reset().fadeIn(0.5).play();
-    return () => actions[animation].fadeOut(0.5);
-  }, [animation]);
+    const currentAction = actions[animation];
+    currentAction.reset().fadeIn(0.5).play();
+
+    if (animation === "Think" || animation === "Talk" || animation === "Greeting") {
+      currentAction.loop = THREE.LoopOnce;
+      currentAction.clampWhenFinished = true;
+    } else {
+      currentAction.loop = THREE.LoopRepeat;
+    }
+
+    const onFinished = (e) => {
+      if (e.action === currentAction && script === "aro" && !audio.paused && !audio.ended) {
+        const anims = ["Think", "Talk"];
+        const randomAnim = anims[Math.floor(Math.random() * anims.length)];
+        setAnimation(randomAnim);
+      }
+    };
+
+    mixer.addEventListener("finished", onFinished);
+
+    return () => {
+      currentAction.fadeOut(0.5);
+      mixer.removeEventListener("finished", onFinished);
+    };
+  }, [animation, actions, mixer, script, audio]);
   // CODE ADDED AFTER THE TUTORIAL (but learnt in the portfolio tutorial ♥️)
   useFrame((state) => {
     if (headFollow) {
@@ -201,26 +234,21 @@ export function Avatar(props) {
         material={materials.Wolf3D_Body}
         skeleton={nodes.Wolf3D_Body.skeleton}
       />
-      <skinnedMesh
-        geometry={nodes.Wolf3D_Outfit_Bottom.geometry}
-        material={materials.Wolf3D_Outfit_Bottom}
-        skeleton={nodes.Wolf3D_Outfit_Bottom.skeleton}
-      />
-      <skinnedMesh
-        geometry={nodes.Wolf3D_Outfit_Footwear.geometry}
-        material={materials.Wolf3D_Outfit_Footwear}
-        skeleton={nodes.Wolf3D_Outfit_Footwear.skeleton}
-      />
-      <skinnedMesh
-        geometry={nodes.Wolf3D_Outfit_Top.geometry}
-        material={materials.Wolf3D_Outfit_Top}
-        skeleton={nodes.Wolf3D_Outfit_Top.skeleton}
-      />
-      <skinnedMesh
-        geometry={nodes.Wolf3D_Hair.geometry}
-        material={materials.Wolf3D_Hair}
-        skeleton={nodes.Wolf3D_Hair.skeleton}
-      />
+      
+      <skinnedMesh geometry={nodes.Wolf3D_Outfit_Bottom001.geometry} material={materials['Wolf3D_Outfit_Bottom.001']} skeleton={nodes.Wolf3D_Outfit_Bottom001.skeleton} />
+
+      <skinnedMesh geometry={nodes.Wolf3D_Outfit_Footwear001.geometry} material={materials['Wolf3D_Outfit_Footwear.001']} skeleton={nodes.Wolf3D_Outfit_Footwear001.skeleton} />
+
+      <skinnedMesh geometry={nodes.Wolf3D_Outfit_Top001.geometry} material={materials['Wolf3D_Outfit_Top.001']} skeleton={nodes.Wolf3D_Outfit_Top001.skeleton} />
+
+      <skinnedMesh 
+        geometry={nodes.Wolf3D_Hair001.geometry} 
+        material={materials['Wolf3D_Hair.001']} 
+        skeleton={nodes.Wolf3D_Hair001.skeleton} />
+      
+      <skinnedMesh geometry={nodes.Wolf3D_Glasses.geometry} material={materials.Wolf3D_Glasses} skeleton={nodes.Wolf3D_Glasses.skeleton} />
+      
+
       <skinnedMesh
         name="EyeLeft"
         geometry={nodes.EyeLeft.geometry}
