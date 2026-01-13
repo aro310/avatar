@@ -1,0 +1,60 @@
+.app-container {
+  display: flex;          /* active le mode flex pour aligner horizontalement */
+  height: 100vh;          /* occupe toute la hauteur de la fenêtre */
+  width: 100vw;           /* occupe toute la largeur de la fenêtre */
+  overflow: hidden;
+  flex-direction: row;    /* par défaut, horizontal pour grands écrans */
+}
+
+.canvas-container {
+  flex: 1;                /* le Canvas prend tout l'espace disponible */
+  height: 100%;           /* assure la pleine hauteur */
+  width: 100%;            /* assure la pleine largeur dans son conteneur */
+}
+
+.canvas-container canvas {
+  width: 100% !important; /* force le canvas à prendre toute la largeur */
+  height: 100% !important;/* force le canvas à prendre toute la hauteur */
+}
+
+.ui-container {
+  width: 800px;           /* largeur fixe pour le formulaire sur grands écrans */
+  max-width: 800px;       /* limite maximale */
+  background-color: #f5f5f5;
+  padding: 20px;
+  box-shadow: -2px 0 5px rgba(0,0,0,0.1);
+  overflow-y: auto;       /* scroll si le formulaire est trop grand */
+  height: 100%;           /* pleine hauteur pour alignement */
+}
+
+/* Media query pour écrans mobiles (largeur < 1024px par exemple) */
+@media (max-width: 1024px) {
+  .app-container {
+    flex-direction: column; /* passe en vertical */
+    height: 100vh;
+  }
+
+  .canvas-container {
+    flex: 0 0 60%;          /* prend 60% de la hauteur sur mobile */
+    width: 100%;
+  }
+
+  .ui-container {
+    width: 100%;            /* pleine largeur sur mobile */
+    max-width: none;        /* pas de limite max */
+    height: 40%;            /* prend le reste de la hauteur */
+    box-shadow: none;       /* optionnel: retire l'ombre pour mobile */
+  }
+}
+
+/* Pour écrans encore plus petits (ex: téléphones) */
+@media (max-width: 768px) {
+  .canvas-container {
+    flex: 0 0 50%;          /* ajuste à 50% pour plus d'espace UI */
+  }
+
+  .ui-container {
+    height: 50%;
+    padding: 10px;          /* réduit le padding pour petits écrans */
+  }
+}
