@@ -57,7 +57,7 @@ def run_script():
         subprocess.run(["python", ele_script_path, texte], check=True, capture_output=True, text=True)
 
         sub_script_path = os.path.abspath("sub.py")
-        subprocess.run(["python", sub_script_path], check=True, capture_output=True, text=True)
+        #subprocess.run(["python", sub_script_path], check=True, capture_output=True, text=True)
         # ---
 
         return jsonify({
@@ -129,4 +129,4 @@ def chat():
         return jsonify({"status": "error", "message": str(e)}), 500
 
 if __name__ == "__main__":
-    app.run(debug=True, port=5000)
+    app.run(debug=True, port=5001)

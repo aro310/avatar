@@ -1,6 +1,6 @@
 // src/services/apiService.js
-const API_URL_SCRIPT = 'http://127.0.0.1:5000/api/run-script';
-const API_URL_CHAT = 'http://127.0.0.1:5000/api/chat';
+const API_URL_SCRIPT = 'http://127.0.0.1:5001/api/run-script';
+const API_URL_CHAT = 'http://127.0.0.1:5001/api/chat';
 
 export const generateAudioFromText = async (text) => {
   const requestOptions = {
